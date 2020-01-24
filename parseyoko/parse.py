@@ -17,13 +17,23 @@ def parse_filepath(filepath):
          "filepath: "test_N22_T0001F006L01A04Z01C02.tif")
     """
     final_path = filepath.split(os.path.sep)[-1]
-    output = namedtuple("Yoko", ["well", "site", "z", "channel", "filepath"])
+    output = namedtuple(
+        "Yoko",
+        ["well", "site", "z", "channel", "filepath", "row", "column"]
+    )
     *_, well, rest = final_path.split("_")
     rest = rest.replace(".tif", "")
     site = int(rest[6:9])
     z = int(rest[16:18])
     channel = int(rest[-2:])
-    return output(well, site, z, channel, filepath)
+    row, column = well_to_row_column(well)
+    return output(well, site, z, channel, filepath, row, column)
+
+
+def well_to_row_column(well):
+    row = ord(well[0].lower()) - 96
+    column = int(well[1:])
+    return row, column
 
 
 def clean_paths(paths):
